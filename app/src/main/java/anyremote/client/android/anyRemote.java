@@ -32,7 +32,9 @@ import java.util.Enumeration;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -49,6 +51,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import anyremote.client.android.util.Address;
 import anyremote.client.android.util.ProtocolMessage;
 import anyremote.client.android.R;
@@ -90,6 +96,8 @@ public class anyRemote extends Activity
 	static final String  ACTION         = "ACT";
 	static final String  SWITCHTO       = "SWT";
 
+	private static final int PERMISSION_REQUEST_CODE = 1;
+
 	int         prevForm = NO_FORM;
 	private static int  currForm = NO_FORM;
 	static int         status;
@@ -119,28 +127,44 @@ public class anyRemote extends Activity
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
-		super.onCreate(savedInstanceState);		
-        
-		logData = new StringBuilder(LOG_CAPACITY);
-		
-		_log("onCreate "+android.os.Build.MODEL+ " " +android.os.Build.VERSION.CODENAME+" "+android.os.Build.VERSION.RELEASE);
-		
-		protocol = new Dispatcher(this);
+		super.onCreate(savedInstanceState);
 
-		//requestWindowFeature(Window.FEATURE_NO_TITLE);
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+			logData = new StringBuilder(LOG_CAPACITY);
+			
+			_log("onCreate "+android.os.Build.MODEL+ " " +android.os.Build.VERSION.CODENAME+" "+android.os.Build.VERSION.RELEASE);
+			
+			protocol = new Dispatcher(this);
 
-		setContentView(R.layout.main);
+			//requestWindowFeature(Window.FEATURE_NO_TITLE);
+			requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
-		currForm        = DUMMY_FORM;
-		status          = DISCONNECTED;
-		finishFlag      = false;
-		
-		if (globalHandler == null) {
-		    globalHandler = new Handler(this);
+			setContentView(R.layout.main);
+
+			currForm        = DUMMY_FORM;
+			status          = DISCONNECTED;
+			finishFlag      = false;
+			
+			if (globalHandler == null) {
+					globalHandler = new Handler(this);
+			}
+
+			MainLoop.enable();
+		} else if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)) {
+			new AlertDialog.Builder(this)
+					.setTitle("Phone State Needed")
+					.setMessage("This app needs to know the state of your phone")
+					.setPositiveButton("OK", (dialog, which) -> {
+						ActivityCompat.requestPermissions(this, new String[]{ Manifest.permission.READ_PHONE_STATE }, PERMISSION_REQUEST_CODE);
+					})
+					.setNegativeButton("Cancel", (dialog, which) -> {
+						dialog.dismiss();
+					})
+					.create()
+					.show();
+		} else {
+			ActivityCompat.requestPermissions(this, new String[]{ android.Manifest.permission.READ_PHONE_STATE }, PERMISSION_REQUEST_CODE);
 		}
-
-		MainLoop.enable();
 	}
 
 	@Override
@@ -221,6 +245,10 @@ public class anyRemote extends Activity
 		
 		prevForm = currForm;
 		currForm = which;
+
+		if (protocol == null) {
+			return;
+		}
 
 		if (currForm != prevForm) {
 						
