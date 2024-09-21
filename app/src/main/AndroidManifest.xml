@@ -7,6 +7,10 @@
 
   <uses-permission android:name="android.permission.BLUETOOTH" />
   <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+  <uses-permission android:name="android.permission.VIBRATE" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
   <uses-feature android:name="android.hardware.sensor.accelerometer" />
   <uses-feature android:name="android.hardware.sensor.gyroscope" />
@@ -34,28 +38,18 @@
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
-    <activity android:name="SearchForm"></activity>
-    <activity android:name="ListScreen"></activity>
-    <activity android:name="TextScreen"></activity>
-    <activity android:name="ControlScreen"></activity>
-    <activity android:name="WinManager"></activity>
+    <activity android:name="SearchForm" />
+    <activity android:name="ListScreen" />
+    <activity android:name="TextScreen" />
+    <activity android:name="ControlScreen" />
+    <activity android:name="WinManager" />
     <activity
         android:name="MouseScreen"
-        android:screenOrientation="portrait"></activity>
+        android:screenOrientation="portrait" />
     <activity
         android:name="KeyboardScreen"
-        android:windowSoftInputMode="stateVisible"></activity>
-    <activity android:name="WebScreen"></activity>
+        android:windowSoftInputMode="stateVisible" />
+    <activity android:name="WebScreen" />
   </application>
-
-  <!--uses-sdk
-     android:minSdkVersion="14"
-     android:targetSdkVersion="28">
-  </uses-sdk-->
-
-  <uses-permission android:name="android.permission.VIBRATE"></uses-permission>
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
-  <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-  <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
 
 </manifest>
